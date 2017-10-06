@@ -1,0 +1,167 @@
+<!doctype html>
+<html>
+    <head>
+        <title>MFTT</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="jspsych-5.0.3/jspsych.js"></script>
+        <script src="jspsych-5.0.3/plugins/jspsych-text.js"></script>
+        <script src="jspsych-5.0.3/plugins/jspsych-instructions.js"></script>
+        <script src="jspsych-5.0.3/plugins/jspsych-single-stim.js"></script>
+        <script src="jspsych-5.0.3/plugins/jspsych-stim-pairings.js"></script>
+        <link href="jspsych-5.0.3/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+    		<script src="jspsych-5.0.3/plugins/jspsych-call-function.js"></script>
+    </head>
+    <body>
+      <div id="jspsych-target"></div>
+    </body>
+    <script>
+
+    /* get participant ID and condition*/
+  	var urlvar = jsPsych.data.urlVariables();
+
+    /* define welcome message block */
+    var welcome = {
+      type: "text",
+      text: "Welcome to the experiment. Press any key to begin."
+    };
+
+    /* define instruction blocks */
+    var intro = {
+      type: "text",
+      text: "<p>You will be presented with statements and asked to " +
+          "choose between words/phrases to complete these statements " +
+          "as quickly as you can based on your gut response.</p>" +
+          "<p>This is a timed task. Going too slow will result in an " +
+          "uninterpretable score.</p>" +
+          "<p>You should be able to complete this task in less than 10 minutes.</p>" +
+          "<br><p>Press SPACE to begin.</p>",
+      cont_key: ['space'],
+      on_trial_start: function()
+        {
+        	$('div.left-side').empty();
+        	$('div.right-side').empty();
+        }
+    };
+
+    var prac_instr = {
+      type: "text",
+      text: "<p>Place your middle or index fingers on the 'e' and 'i' keys " +
+          "of your keyboard. When choosing the word on the left, press the 'e' key. " +
+          "When choosing the word on the right, press the 'i' key.</p>" +
+          "<div class='left center-content'><p><strong>Press the e key</strong></p></div>" +
+          "<div class='right center-content'><p><strong>Press the i key</strong></p></div>" +
+          "<br><br><p>Press SPACE to begin practice.</p>",
+      cont_key: ['space'],
+      on_trial_start: function()
+        {
+        	$('div.left-side').empty();
+        	$('div.right-side').empty();
+        }
+    };
+
+    var test_instr = {
+      type: "text",
+      text: "<p>You will now begin the testing block.</p>" +
+          "<p>Place your middle or index fingers on the 'e' and 'i' keys " +
+          "of your keyboard.</p>" +
+          "<p>Go with your gut response. Going too slow will " +
+          "result in an uninterpretatble score.</p>" +
+          "<br><br><p>Press SPACE to begin.</p>",
+      cont_key: ['space'],
+      on_trial_start: function()
+        {
+        	$('div.left-side').empty();
+        	$('div.right-side').empty();
+        }
+    };
+
+    var break_instr = {
+      type: "text",
+      text: "<p>This is an opportunity to take a short break if you need to.</p>" +
+          "<br><br><p>Press SPACE to begin.</p>",
+      cont_key: ['space'],
+      on_trial_start: function()
+        {
+          $('div.left-side').empty();
+          $('div.right-side').empty();
+        }
+    };
+
+    var end_exp = {
+      type: "text",
+      text: "<p>This is the end of the task.</p>" +
+          "<br><br><p>Press any key to end.</p>",
+    };
+
+    /* ============DEFINE WORD PAIRINGD===============*/
+
+  /*  var prac_neg = [
+      [{stimulus: '<p>Uncaring</p>', is_html:true},
+        {stimulus: '<p>Peaceful</p>', is_html:true},
+        {stimulus: '<p>worse to be</p>', is_html:true}]
+    ];
+    var p_neg = jsPsych.randomization.shuffle(prac_neg);
+
+    var p_neg_trials = []
+    var i = 0;
+    var len = p_neg.length;
+    for (; i < len; i++) {
+      var trial = p_neg[i],
+      var stim_order = jsPsych.randomization.shuffle([12,21]),
+      if(stim_order == 12){
+        var WordL = trial[0],
+        var WordR = trial[1],
+        var prompt = trial[2];
+      } else {
+        var WordL = trial[1],
+        var WordR = trial[0],
+        var prompt = trial[2];
+      }
+        p_neg_trials = p_neg_trials.concat();
+    }*?
+
+    /* define practice block */
+    /*var prac_block = {
+      type: "text",
+      text: "<p class='center-content'>It is</p>" +
+          "<div class='left center-content'><p>WordL</p></div>" +
+          "<div class='right center-content'><p>WordR</p></div>",
+    };*/
+
+    /* =================DEFINE BLOCKS================= */
+
+    var prac_trials = {
+        type: 'stim-pairings',
+        prompt: "<p class='center-content'>It is worse to be</p>",
+        choices: ['e','i'],
+        timeline: [
+          {stimuli: ["<p>Uncaring</p>","<p>Peaceful</p>"], is_html:true}
+        ],
+        randomize_order: true
+    }
+
+
+    /* create experiment definition array */
+    var timeline = [];
+    timeline.push(welcome);
+    timeline.push(intro);
+    timeline.push(prac_instr);
+    timeline.push(prac_trials);
+    timeline.push(test_instr);
+    timeline.push(break_instr);
+    timeline.push(prac_instr);
+    timeline.push(test_instr);
+    timeline.push(end_exp);
+
+    /* start the experiment */
+
+    /* start the experiment */
+    jsPsych.init({
+      fullscreen: true,
+      timeline: timeline,
+      on_finish: function() {
+        jsPsych.data.displayData();
+      }
+    });
+  </script>
+</html>
