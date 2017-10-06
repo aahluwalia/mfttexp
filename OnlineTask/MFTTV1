@@ -93,41 +93,6 @@
           "<br><br><p>Press any key to end.</p>",
     };
 
-    /* ============DEFINE WORD PAIRINGD===============*/
-
-  /*  var prac_neg = [
-      [{stimulus: '<p>Uncaring</p>', is_html:true},
-        {stimulus: '<p>Peaceful</p>', is_html:true},
-        {stimulus: '<p>worse to be</p>', is_html:true}]
-    ];
-    var p_neg = jsPsych.randomization.shuffle(prac_neg);
-
-    var p_neg_trials = []
-    var i = 0;
-    var len = p_neg.length;
-    for (; i < len; i++) {
-      var trial = p_neg[i],
-      var stim_order = jsPsych.randomization.shuffle([12,21]),
-      if(stim_order == 12){
-        var WordL = trial[0],
-        var WordR = trial[1],
-        var prompt = trial[2];
-      } else {
-        var WordL = trial[1],
-        var WordR = trial[0],
-        var prompt = trial[2];
-      }
-        p_neg_trials = p_neg_trials.concat();
-    }*?
-
-    /* define practice block */
-    /*var prac_block = {
-      type: "text",
-      text: "<p class='center-content'>It is</p>" +
-          "<div class='left center-content'><p>WordL</p></div>" +
-          "<div class='right center-content'><p>WordR</p></div>",
-    };*/
-
     /* =================DEFINE BLOCKS================= */
 
     var prac_trials = {
