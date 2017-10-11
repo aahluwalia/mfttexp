@@ -21,8 +21,9 @@
 
         /* float left and float right
 
-    /* get participant ID and condition*/
-  	var urlvar = jsPsych.data.urlVariables();
+    /* get participant ID */
+    var subject_nr = jsPsych.data.getURLVariable('subject')
+    /*presuming subject_nr will make up part of url, e.g. experiment.html?subject=1234
 
     /* define welcome message block */
     var welcome = {
@@ -354,16 +355,25 @@
 
     timeline.push(end_exp);
 
-    /* start the experiment */
+    /* function to save files */
+
+    function saveData(filename, filedata){
+      $.ajax({
+      type:'post',
+      cache: false,
+      url: 'save_data.php', // this is the path to the PHP script
+      data: {filename: filename, filedata: filedata}
+      });
+    }
 
     /* start the experiment */
     jsPsych.init({
       fullscreen: true,
       timeline: timeline,
-      on_finish: function() {
-        jsPsych.data.displayData();
-      }
-    });
+      on_finish: function(trial_data){
+        saveData(subject_nr + ".csv",
+        jsPsych.data.dataAsCSV())
+     }});
   </script>
   </body>
 </html>

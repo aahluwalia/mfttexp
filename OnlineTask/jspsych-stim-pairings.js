@@ -1,13 +1,3 @@
-/**
- * jspsych-single-stim
- * Josh de Leeuw
- *
- * plugin for displaying a stimulus and getting a keyboard response
- *
- * documentation: docs.jspsych.org
- *
- **/
-
 
 jsPsych.plugins["stim-pairings"] = (function() {
 
@@ -17,26 +7,24 @@ jsPsych.plugins["stim-pairings"] = (function() {
 
   plugin.trial = function(display_element, trial) {
 
-    // if any trial variables are functions
-    // this evaluates the function and replaces
-    // it with the output of the function
-    trial = jsPsych.pluginAPI.evaluateFunctionParameters(trial);
-
     // set default values for the parameters
     trial.choices = trial.choices || [];
-    trial.response_ends_trial = (typeof trial.response_ends_trial == 'undefined') ? true : trial.response_ends_trial;
     trial.timing_stim = trial.timing_stim || -1;
     trial.timing_response = trial.timing_response || -1;
     trial.is_html = (typeof trial.is_html == 'undefined') ? false : trial.is_html;
     trial.prompt = trial.prompt || "";
 
-    // this array holds handlers from setTimeout calls
-    // that need to be cleared if the trial ends early
-    var setTimeoutHandlers = [];
+    // if any trial variables are functions
+    // this evaluates the function and replaces
+    // it with the output of the function
+    trial = jsPsych.pluginAPI.evaluateFunctionParameters(trial);
 
     //show prompt if there is one
     if (trial.prompt !== "") {
-      display_element.append(trial.prompt);
+      display_element.append($('<div>', {
+        "id": 'jspsych-trial-instr',
+        html: trial.prompt
+      }));
     }
 
 
@@ -44,12 +32,16 @@ jsPsych.plugins["stim-pairings"] = (function() {
     trial.word1 = trial.stimuli[0];
     trial.word2 = trial.stimuli[1];
 
-    function showStimulus() {
+    // this array holds handlers from setTimeout calls
+    // that need to be cleared if the trial ends early
+    var setTimeoutHandlers = [];
 
-      // randomize whether the target is on the left or the right
+
+
+      // randomise whether the target is on the left or the right
       var pairing = [trial.word1, trial.word2];
-      var stim_order = (Math.floor(Math.random() * 2) === 0); // 50% chance target is on left.
-      if (!stim_order) {
+      var stim_left = (Math.floor(Math.random() * 2) === 0); // 50% chance word1 is on left.
+      if (!stim_left) {
         pairing = [trial.word2, trial.word1],
         trial.wordL = trial.word2,
         trial.WordR = trial.word1;
@@ -62,23 +54,22 @@ jsPsych.plugins["stim-pairings"] = (function() {
       if (!trial.is_html) {
         display_element.append($('<img>', {
           "src": pairing[0],
-          "class": 'jspsych-stim-pairing left'
+          "id": 'jspsych-stim-pairing-left'
         }));
         display_element.append($('<img>', {
           "src": pairing[1],
-          "class": 'jspsych-stim-pairing right'
+          "id": 'jspsych-stim-pairing-right'
         }));
       } else {
         display_element.append($('<div>', {
-          "class": 'jspsych-stim-pairing left',
+          "id": 'jspsych-stim-pairing-left',
           html: pairing[0]
         }));
         display_element.append($('<div>', {
-          "class": 'jspsych-stim-pairing right',
+          "id": 'jspsych-stim-pairing-right',
           html: pairing[1]
         }));
       }
-    }
 
     // store response
     var response = {
@@ -103,8 +94,8 @@ jsPsych.plugins["stim-pairings"] = (function() {
       var trial_data = {
         "rt": response.rt,
         "stimuli": trial.stimuli,
-        "wordL": trial.wordL
-        "WordR": trial.WordR
+        "wordL": trial.wordL,
+        "WordR": trial.WordR,
         "key_press": response.key
       };
 
@@ -124,10 +115,7 @@ jsPsych.plugins["stim-pairings"] = (function() {
       if (response.key == -1) {
         response = info;
       }
-
-      if (trial.response_ends_trial) {
         end_trial();
-      }
     };
 
     // start the response listener
