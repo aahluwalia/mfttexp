@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Value Tradeoffs</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="jspsych-5.0.3/jspsych.js"></script>
+        <script src="jspsych-5.0.3/plugins/jspsych-html.js"></script>
+        <script src="jspsych-5.0.3/plugins/jspsych-text.js"></script>
+        <script src="jspsych-5.0.3/plugins/jspsych-stim-pairings.js"></script>
+        <script src="jspsych-5.0.3/plugins/jspsych-survey-text.js"></script>
+        <script src="jspsych-5.0.3/plugins/jspsych-survey-multi-choice-click-twice.js"></script>
+        <script src="jspsych-5.0.3/plugins/jspsych-call-function.js"></script>
+        <link href="jspsych-5.0.3/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+        <style>#jspsych-text {margin: auto; width: 100%; text-align: left; font-size: 100%}</style>
+        <style>#large-text {margin: auto; width: 100%; text-align: left; font-size: 130%}</style>
+        <style>#consent {margin: auto; width: 100%; text-align: left;}</style>
+        <style>#consent_checkbox {margin: auto; width: 100%; text-align: left;}</style>
+        <style>#start {margin: auto; text-align: left; }</style>
+
+        <style>#jspsych-survey-multi-choice-click-twice-preamble {margin: auto; width: 100%; text-align: center;}</style>
+
+        <style>#jspsych-trial-instr {width: 100%; text-align: center; font-size: 130%}</style>
+        <style>#jspsych-stim-pairing-left {width: 40%; float: left; text-align: center; font-size: 130%}</style>
+        <style>#jspsych-stim-pairing-right {width: 40%; float: right; text-align: center; font-size: 130%}</style>
+        <style>body {margin: 0; padding: 50px 0; font-size: 100%; text-align: left;;}</style>
+    <body>
+    <script>
+
+    /* =================DEFINE MFTT================= */
+    /* define welcome message block */
+    var start_mftt = {
+      type: "text",
+      text: "<div id='jspsych-text'><p>In this portion of the study, you will complete " +
+      "an intuitive decision task. It is important that you complete this task in one go with minimal distractions.</p>" +
+      "<p>This part should take no more than 15 minutes.</p>" +
+      "<p>Press any key to begin.</p></div>"
+    };
+
+    /* define instruction blocks */
+    var intro_mftt = {
+      type: "text",
+      text: "<div id='jspsych-text'><p>You will be presented with statements and asked to " +
+          "choose between words/phrases to complete these statements " +
+          "as quickly as you can based on your gut response.</p>" +
+          "<p>This is a timed task. Going too slow will result in an " +
+          "uninterpretable score.</p>" +
+          "<p>You should be able to complete this task in less than 15 minutes.</p>" +
+          "<br><p>Press SPACE to begin.</p></div>",
+      cont_key: ['space'],
+    };
+
+    var prac_instr = {
+      type: "text",
+      text:"<div id='large-text'><p>Practice</p></div>" +
+          "<div id='jspsych-text'><p>Place your middle or index fingers on the 'e' and 'i' keys " +
+          "of your keyboard. When choosing the word on the left, press the 'e' key. " +
+          "When choosing the word on the right, press the 'i' key.</p>" +
+          "<div id='jspsych-stim-pairing-left'><p>Press the e key</p></div>" +
+          "<div id='jspsych-stim-pairing-right'><p>Press the i key</p></div>" +
+          "<br><p>Press SPACE to begin practice.</p></div>",
+      cont_key: ['space'],
+    };
+
+    var test_instr = {
+      type: "text",
+      text: "<div id='jspsych-text'><p>You will now begin the testing block.</p>" +
+          "<p>Place your middle or index fingers on the 'e' and 'i' keys " +
+          "of your keyboard.</p>" +
+          "<p>Go with your gut response. Going too slow will " +
+          "result in an uninterpretatble score.</p>" +
+          "<br><p>Press SPACE to begin.</p></div>",
+      cont_key: ['space'],
+    };
+
+    var break_instr = {
+      type: "text",
+      text: "<div id='large-text'><p>Break</p></div>" +
+          "<div id='jspsych-text'><p>This is an opportunity to take a short break if you need to.</p>" +
+          "<br><p>Press SPACE to begin.</p></div>",
+      cont_key: ['space'],
+    };
+
+    /* ============DEFINE WORD PAIRINGD===============*/
+
+    var prac_bad = {
+        type: 'stim-pairings',
+        prompt: "<p>It is worse to be</p>",
+        choices: ['e','i'],
+        timeline: jsPsych.randomization.sample([
+          {stimuli: ["<p>Uncaring</p>","<p>Peaceful</p>"], is_html:true},
+          {stimuli: ["<p>Untrustworthy</p>","<p>Polite</p>"], is_html:true},
+          {stimuli: ["<p>Tell the truth</p>","<p>Steal from the poor</p>"], prompt: "<p>It is worse to</p>", is_html:true},
+          {stimuli: ["<p>Share with others</p>","<p>Lie to friends</p>"], prompt: "<p>It is worse to</p>", is_html:true},
+          {stimuli: ["<p>Help your family</p>","<p>Exploit others</p>"], prompt: "<p>It is worse to</p>", is_html:true},
+          {stimuli: ["<p>Unkind</p>","<p>Impatient</p>"], is_html:true},
+          {stimuli: ["<p>Rude</p>","<p>Violent</p>"], is_html:true},
+        ], 2, false),
+        randomize_order: true,
+    };
+
+    var prac_good = {
+        type: 'stim-pairings',
+        prompt: "<p>It is better to be</p>",
+        choices: ['e','i'],
+        timeline: jsPsych.randomization.sample([
+          {stimuli: ["<p>Polite</p>","<p>Dutiful</p>"], is_html:true},
+          {stimuli: ["<p>Trustworthy</p>","<p>Rude</p>"], is_html:true},
+          {stimuli: ["<p>Help your family</p>","<p>Exploit others</p>"], prompt: "<p>It is better to</p>", is_html:true},
+          {stimuli: ["<p>Share with others</p>","<p>Lie to friends</p>"], prompt: "<p>It is better to</p>", is_html:true},
+          {stimuli: ["<p>Tell the truth</p>","<p>Give to the poor</p>"], prompt: "<p>It is better to</p>", is_html:true},
+          {stimuli: ["<p>Empathetic</p>","<p>Violent</p>"], is_html:true},
+          {stimuli: ["<p>Kind</p>","<p>Patient</p>"], is_html:true},
+        ], 2, false), /*sampling 4 times without replacement*/
+        randomize_order: true,
+    };
+
+    var bad_active = {
+        type: 'stim-pairings',
+        prompt: "<p>It is worse to</p>",
+        choices: ['e','i'],
+        timeline: jsPsych.randomization.sample([
+          {stimuli: ["<p>Act in an obstructive manner</p>","<p>Treat some people differently</p>"], is_html:true},
+          {stimuli: ["<p>Do something cruel</p>","<p>Treat some people differently</p>"], is_html:true},
+          {stimuli: ["<p>Act in an obscene manner</p>","<p>Do something illegal</p>"], is_html:true},
+          {stimuli: ["<p>Behave indecently</p>","<p>Cause chaos or disorder</p>"], is_html:true},
+          {stimuli: ["<p>Act in an ungodly way</p>","<p>Insult your country</p>"], is_html:true},
+          {stimuli: ["<p>Act in an obscene manner</p>","<p>Treat some people differently</p>"], is_html:true},
+          {stimuli: ["<p>Commit treason</p>","<p>Do something illegal</p>"], is_html:true},
+          {stimuli: ["<p>Act in an obscene manner</p>","<p>Harm defenceless animals</p>"], is_html:true},
+          {stimuli: ["<p>Commit treason</p>","<p>Do something cruel</p>"], is_html:true},
+          {stimuli: ["<p>Harm defenceless animals</p>","<p>Treat some people differently</p>"], is_html:true},
+          {stimuli: ["<p>Betray a friend</p>","<p>Treat some people differently</p>"], is_html:true},
+          {stimuli: ["<p>Betray a friend</p>","<p>Harm defenceless animals</p>"], is_html:true},
+          {stimuli: ["<p>Act in an obscene manner</p>","<p>Hurt others' feelings</p>"], is_html:true},
+          {stimuli: ["<p>Act in an obstructive manner</p>","<p>Behave indecently</p>"], is_html:true},
+          {stimuli: ["<p>Act for selfish reasons</p>","<p>Do something illegal</p>"], is_html:true},
+          {stimuli: ["<p>Do something illegal</p>","<p>Treat some people differently</p>"], is_html:true},
+          {stimuli: ["<p>Commit treason</p>","<p>Treat some people differently</p>"], is_html:true},
+          {stimuli: ["<p>Behave indecently</p>","<p>Cheat to get ahead</p>"], is_html:true},
+          {stimuli: ["<p>Cause chaos or disorder</p>","<p>Treat some people differently</p>"], is_html:true},
+          {stimuli: ["<p>Act for selfish reasons</p>","<p>Behave indecently</p>"], is_html:true},
+          {stimuli: ["<p>Cheat to get ahead</p>","<p>Hurt others' feelings</p>"], is_html:true},
+          {stimuli: ["<p>Behave indecently</p>","<p>Treat some people differently</p>"], is_html:true},
+          {stimuli: ["<p>Cheat to get ahead</p>","<p>Make other people suffer</p>"], is_html:true},
+          {stimuli: ["<p>Commit treason</p>","<p>Harm defenceless animals</p>"], is_html:true},
+          {stimuli: ["<p>Do something illegal</p>","<p>Harm defenceless animals</p>"], is_html:true},
+          {stimuli: ["<p>Act for selfish reasons</p>","<p>Cause chaos or disorder</p>"], is_html:true},
+          {stimuli: ["<p>Do something cruel</p>","<p>Do something illegal</p>"], is_html:true},
+          {stimuli: ["<p>Act for selfish reasons</p>","<p>Act in an obscene manner</p>"], is_html:true},
+          {stimuli: ["<p>Cause chaos or disorder</p>","<p>Harm defenceless animals</p>"], is_html:true},
+          {stimuli: ["<p>Betray a friend</p>","<p>Cheat to get ahead</p>"], is_html:true},
+          {stimuli: ["<p>Act in an obscene manner</p>","<p>Commit treason</p>"], is_html:true},
+          {stimuli: ["<p>Act for selfish reasons</p>","<p>Act in an obstructive manner</p>"], is_html:true},
+          {stimuli: ["<p>Behave indecently</p>","<p>Show a lack of respect for authority</p>"], is_html:true},
+          {stimuli: ["<p>Act in an obscene manner</p>","<p>Cheat to get ahead</p>"], is_html:true},
+          {stimuli: ["<p>Cause chaos or disorder</p>","<p>Do something cruel</p>"], is_html:true},
+          {stimuli: ["<p>Act in an obscene manner</p>","<p>Do something cruel</p>"], is_html:true},
+          {stimuli: ["<p>Act for selfish reasons</p>","<p>Treat some people differently</p>"], is_html:true},
+          {stimuli: ["<p>Behave indecently</p>","<p>Do something cruel</p>"], is_html:true},
+          {stimuli: ["<p>Betray a friend</p>","<p>Do something cruel</p>"], is_html:true},
+          {stimuli: ["<p>Cheat to get ahead</p>","<p>Do something illegal</p>"], is_html:true},
+        ], 5, false), /*sampling 20 times without replacement*/
+        randomize_order: true,
+    };
+
+    var bad_passive = {
+        type: 'stim-pairings',
+        prompt: "<p>It is worse to be</p>",
+        choices: ['e','i'],
+        timeline: jsPsych.randomization.sample([
+          {stimuli: ["<p>Undisciplined</p>","<p>Unfaithful</p>"], is_html:true},
+          {stimuli: ["<p>Subversive</p>","<p>Unfaithful</p>"], is_html:true},
+          {stimuli: ["<p>Undisciplined</p>","<p>Intolerant</p>"], is_html:true},
+          {stimuli: ["<p>Undisciplined</p>","<p>Sinful</p>"], is_html:true},
+          {stimuli: ["<p>Undisciplined</p>","<p>Neglectful</p>"], is_html:true},
+          {stimuli: ["<p>Rebellious</p>","<p>Dirty</p>"], is_html:true},
+          {stimuli: ["<p>Undisciplined</p>","<p>Cruel</p>"], is_html:true},
+          {stimuli: ["<p>Disobedient</p>","<p>Promiscuous</p>"], is_html:true},
+          {stimuli: ["<p>Unfair</p>","<p>Sinful</p>"], is_html:true},
+          {stimuli: ["<p>Disloyal</p>","<p>Sinful</p>"], is_html:true},
+          {stimuli: ["<p>Cruel</p>","<p>Disloyal</p>"], is_html:true},
+          {stimuli: ["<p>Aggressive</p>","<p>Sinful</p>"], is_html:true},
+          {stimuli: ["<p>Undisciplined</p>","<p>Unpatriotic</p>"], is_html:true},
+          {stimuli: ["<p>Rebellious</p>","<p>Promiscuous</p>"], is_html:true},
+          {stimuli: ["<p>Selfish</p>","<p>Sinful</p>"], is_html:true},
+          {stimuli: ["<p>Unfair</p>","<p>Unfaithful</p>"], is_html:true},
+          {stimuli: ["<p>Neglectful</p>","<p>Disloyal</p>"], is_html:true},
+          {stimuli: ["<p>Neglectful</p>","<p>Promiscuous</p>"], is_html:true},
+          {stimuli: ["<p>Harmful</p>","<p>Biased</p>"], is_html:true},
+          {stimuli: ["<p>Aggressive</p>","<p>Unfaithful</p>"], is_html:true},
+          {stimuli: ["<p>Cruel</p>","<p>Selfish</p>"], is_html:true},
+          {stimuli: ["<p>Undisciplined</p>","<p>Biased</p>"], is_html:true},
+          {stimuli: ["<p>Aggressive</p>","<p>Biased</p>"], is_html:true},
+          {stimuli: ["<p>Unfaithful</p>","<p>Promiscuous</p>"], is_html:true},
+          {stimuli: ["<p>Unjust</p>","<p>Sinful</p>"], is_html:true},
+          {stimuli: ["<p>Harmful</p>","<p>Sinful</p>"], is_html:true},
+          {stimuli: ["<p>Subversive</p>","<p>Cruel</p>"], is_html:true},
+          {stimuli: ["<p>Biased</p>","<p>Promiscuous</p>"], is_html:true},
+          {stimuli: ["<p>Intolerant</p>","<p>Disloyal</p>"], is_html:true},
+          {stimuli: ["<p>Disobedient</p>","<p>Harmful</p>"], is_html:true},
+          {stimuli: ["<p>Intolerant</p>","<p>Promiscuous</p>"], is_html:true},
+          {stimuli: ["<p>Subversive</p>","<p>Biased</p>"], is_html:true},
+          {stimuli: ["<p>Rebellious</p>","<p>Unfair</p>"], is_html:true},
+          {stimuli: ["<p>Cruel</p>","<p>Promiscuous</p>"], is_html:true},
+          {stimuli: ["<p>Cruel</p>","<p>Unfair</p>"], is_html:true},
+          {stimuli: ["<p>Biased</p>","<p>Selfish</p>"], is_html:true},
+          {stimuli: ["<p>Disobedient</p>","<p>Disloyal</p>"], is_html:true},
+          {stimuli: ["<p>Harmful</p>","<p>Intolerant</p>"], is_html:true},
+          {stimuli: ["<p>Unpatriotic</p>","<p>Promiscuous</p>"], is_html:true},
+          {stimuli: ["<p>Biased</p>","<p>Disloyal</p>"], is_html:true},
+        ], 5, false), /*sampling 20 times without replacement*/
+        randomize_order: true,
+    };
+
+    var good_active = {
+        type: 'stim-pairings',
+        prompt: "<p>It is better to</p>",
+        choices: ['e','i'],
+        timeline: jsPsych.randomization.sample([
+          {stimuli: ["<p>Comply with people in authority</p>","<p>Protect defenceless animals</p>"], is_html:true},
+          {stimuli: ["<p>Obey elders</p>","<p>Protect defenceless animals</p>"], is_html:true},
+          {stimuli: ["<p>Protect defenceless animals</p>","<p>Respect the traditions of society</p>"], is_html:true},
+          {stimuli: ["<p>Obey the law</p>","<p>Protect defenceless animals</p>"], is_html:true},
+          {stimuli: ["<p>Comply with people in authority</p>","<p>Treat everyone equally</p>"], is_html:true},
+          {stimuli: ["<p>Obey elders</p>","<p>Treat everyone equally</p>"], is_html:true},
+          {stimuli: ["<p>Be openminded about other people</p>","<p>Comply with people in authority</p>"], is_html:true},
+          {stimuli: ["<p>Be openminded about other people</p>","<p>Obey elders</p>"], is_html:true},
+          {stimuli: ["<p>Comply with people in authority</p>","<p>Put family before yourself</p>"], is_html:true},
+          {stimuli: ["<p>Obey elders</p>","<p>Put family before yourself</p>"], is_html:true},
+          {stimuli: ["<p>Obey the law</p>","<p>Show love for your country</p>"], is_html:true},
+          {stimuli: ["<p>Put family before yourself</p>","<p>Respect the traditions of society</p>"], is_html:true},
+          {stimuli: ["<p>Act in a modest manner</p>","<p>Comply with people in authority</p>"], is_html:true},
+          {stimuli: ["<p>Act in a modest manner</p>","<p>Obey elders</p>"], is_html:true},
+          {stimuli: ["<p>Maintain a clean reputation</p>","<p>Obey the law</p>"], is_html:true},
+          {stimuli: ["<p>Act in a modest manner</p>","<p>Respect the traditions of society</p>"], is_html:true},
+          {stimuli: ["<p>Be openminded about other people</p>","<p>Care for vulnerable people</p>"], is_html:true},
+          {stimuli: ["<p>Care for vulnerable people</p>","<p>Protect others' rights</p>"], is_html:true},
+          {stimuli: ["<p>Defend vulnerable people</p>","<p>Treat everyone equally</p>"], is_html:true},
+          {stimuli: ["<p>Care for vulnerable people</p>","<p>Treat everyone fairly</p>"], is_html:true},
+          {stimuli: ["<p>Protect defenceless animals</p>","<p>Show loyalty to friends</p>"], is_html:true},
+          {stimuli: ["<p>Act for the good of the group</p>","<p>Protect defenceless animals</p>"], is_html:true},
+          {stimuli: ["<p>Show compassion when others suffer</p>","<p>Show loyalty to friends</p>"], is_html:true},
+          {stimuli: ["<p>Act for the good of the group</p>","<p>Show compassion when others suffer</p>"], is_html:true},
+          {stimuli: ["<p>Act with integrity</p>","<p>Care for vulnerable people</p>"], is_html:true},
+          {stimuli: ["<p>Act with integrity</p>","<p>Defend vulnerable people</p>"], is_html:true},
+          {stimuli: ["<p>Act with integrity</p>","<p>Show compassion when others suffer</p>"], is_html:true},
+          {stimuli: ["<p>Act in a modest manner</p>","<p>Protect defenceless animals</p>"], is_html:true},
+          {stimuli: ["<p>Show loyalty to friends</p>","<p>Treat everyone equally</p>"], is_html:true},
+          {stimuli: ["<p>Be openminded about other people</p>","<p>Show loyalty to friends</p>"], is_html:true},
+          {stimuli: ["<p>Protect others' rights</p>","<p>Show loyalty to friends</p>"], is_html:true},
+          {stimuli: ["<p>Act for the good of the group</p>","<p>Treat everyone equally</p>"], is_html:true},
+          {stimuli: ["<p>Act with integrity</p>","<p>Be openminded about other people</p>"], is_html:true},
+          {stimuli: ["<p>Act with integrity</p>","<p>Protect others' rights</p>"], is_html:true},
+          {stimuli: ["<p>Act with integrity</p>","<p>Treat everyone fairly</p>"], is_html:true},
+          {stimuli: ["<p>Act with integrity</p>","<p>Treat everyone equally</p>"], is_html:true},
+          {stimuli: ["<p>Act in a modest manner</p>","<p>Put family before yourself</p>"], is_html:true},
+          {stimuli: ["<p>Maintain a clean reputation</p>","<p>Show love for your country</p>"], is_html:true},
+          {stimuli: ["<p>Act for the good of the group</p>","<p>Act in a modest manner</p>"], is_html:true},
+          {stimuli: ["<p>Maintain a clean reputation</p>","<p>Put family before yourself</p>"], is_html:true},
+        ], 5, false), /*sampling 20 times without replacement*/
+        randomize_order: true,
+    };
+
+    var good_passive = {
+        type: 'stim-pairings',
+        prompt: "<p>It is better to be</p>",
+        choices: ['e','i'],
+        timeline: jsPsych.randomization.sample([
+          {stimuli: ["<p>Unbiased</p>","<p>Pure</p>"], is_html:true},
+          {stimuli: ["<p>Caring</p>","<p>Pure</p>"], is_html:true},
+          {stimuli: ["<p>Unbiased</p>","<p>Dutiful</p>"], is_html:true},
+          {stimuli: ["<p>Compassionate</p>","<p>Pure</p>"], is_html:true},
+          {stimuli: ["<p>Disciplined</p>","<p>Caring</p>"], is_html:true},
+          {stimuli: ["<p>Disciplined</p>","<p>Fair</p>"], is_html:true},
+          {stimuli: ["<p>Unbiased</p>","<p>Virtuous</p>"], is_html:true},
+          {stimuli: ["<p>Patriotic</p>","<p>Virtuous</p>"], is_html:true},
+          {stimuli: ["<p>Respectful</p>","<p>Dutiful</p>"], is_html:true},
+          {stimuli: ["<p>Tolerant</p>","<p>Devoted</p>"], is_html:true},
+          {stimuli: ["<p>Fair</p>","<p>Pure</p>"], is_html:true},
+          {stimuli: ["<p>Sympathetic</p>","<p>Clean</p>"], is_html:true},
+          {stimuli: ["<p>Tolerant</p>","<p>Clean</p>"], is_html:true},
+          {stimuli: ["<p>Disciplined</p>","<p>Patriotic</p>"], is_html:true},
+          {stimuli: ["<p>Sympathetic</p>","<p>Devoted</p>"], is_html:true},
+          {stimuli: ["<p>Sympathetic</p>","<p>Unbiased</p>"], is_html:true},
+          {stimuli: ["<p>Lawful</p>","<p>Sympathetic</p>"], is_html:true},
+          {stimuli: ["<p>Loyal</p>","<p>Clean</p>"], is_html:true},
+          {stimuli: ["<p>Respectful</p>","<p>Sympathetic</p>"], is_html:true},
+          {stimuli: ["<p>Compassionate</p>","<p>Virtuous</p>"], is_html:true},
+          {stimuli: ["<p>Caring</p>","<p>Tolerant</p>"], is_html:true},
+          {stimuli: ["<p>Obedient</p>","<p>Patriotic</p>"], is_html:true},
+          {stimuli: ["<p>Respectful</p>","<p>Unprejudiced</p>"], is_html:true},
+          {stimuli: ["<p>Compassionate</p>","<p>Dutiful</p>"], is_html:true},
+          {stimuli: ["<p>Disciplined</p>","<p>Clean</p>"], is_html:true},
+          {stimuli: ["<p>Respectful</p>","<p>Virtuous</p>"], is_html:true},
+          {stimuli: ["<p>Compassionate</p>","<p>Loyal</p>"], is_html:true},
+          {stimuli: ["<p>Caring</p>","<p>Loyal</p>"], is_html:true},
+          {stimuli: ["<p>Dutiful</p>","<p>Pious</p>"], is_html:true},
+          {stimuli: ["<p>Respectful</p>","<p>Loyal</p>"], is_html:true},
+          {stimuli: ["<p>Lawful</p>","<p>Pure</p>"], is_html:true},
+          {stimuli: ["<p>Unbiased</p>","<p>Loyal</p>"], is_html:true},
+          {stimuli: ["<p>Patriotic</p>","<p>Pure</p>"], is_html:true},
+          {stimuli: ["<p>Fair</p>","<p>Loyal</p>"], is_html:true},
+          {stimuli: ["<p>Respectful</p>","<p>Nurturing</p>"], is_html:true},
+          {stimuli: ["<p>Lawful</p>","<p>Tolerant</p>"], is_html:true},
+          {stimuli: ["<p>Sympathetic</p>","<p>Fair</p>"], is_html:true},
+          {stimuli: ["<p>Compassionate</p>","<p>Tolerant</p>"], is_html:true},
+          {stimuli: ["<p>Obedient</p>","<p>Pious</p>"], is_html:true},
+          {stimuli: ["<p>Respectful</p>","<p>Tolerant</p>"], is_html:true},
+        ], 5, false), /*sampling 20 times without replacement*/
+        randomize_order: true,
+    };
+
+    /* =================DEFINE BLOCKS & SET ARRAY================= */
+
+    /* setting mftt blocks */
+
+    var good_block = [];
+    good_block.push(prac_good);
+    var good_order = jsPsych.randomization.shuffle([good_active, good_passive]);
+    for (i = 0, len = good_order.length, task = []; i < len; i++) {
+      good_block.push(good_order[i]);
+    };
+
+    var bad_block = [];
+    bad_block.push(prac_bad);
+    var bad_order = jsPsych.randomization.shuffle([bad_active, bad_passive]);
+    for (i = 0, len = bad_order.length, task = []; i < len; i++) {
+      bad_block.push(bad_order[i]);
+    };
+
+    var mftt_task_order = jsPsych.randomization.shuffle([good_block, bad_block])
+
+    /* create mftt array */
+    var mftttasks = [];
+    mftttasks.push(start_mftt);
+    mftttasks.push(intro_mftt);
+    mftttasks.push(prac_instr);
+    mftttasks.push(mftt_task_order[0][0]);
+
+    mftttasks.push(test_instr);
+    mftttasks.push(mftt_task_order[0][1]);
+    mftttasks.push(mftt_task_order[0][2]);
+
+    mftttasks.push(break_instr);
+
+    mftttasks.push(prac_instr);
+    mftttasks.push(mftt_task_order[1][0]);
+
+    mftttasks.push(test_instr);
+    mftttasks.push(mftt_task_order[1][1]);
+    mftttasks.push(mftt_task_order[1][2]);
+
+      for (i = 0, len = mftt_task_order.length, alltasks = [], task = []; i < len; i++) {
+        task = mftt_task_order[i];
+        for (n = 0, len2 = task.length; n < len2; n++) {
+          alltasks.push(task[n]);
+        }
+      };
+
+    /* create experiment definition array */
+    var timeline = [];
+
+    for (i = 0, len = alltasks.length; i < len; i++) {
+      timeline.push(alltasks[i]);
+    };
+
+    /* start the experiment */
+
+    jsPsych.init({
+      timeline: timeline,
+      on_finish: function()
+        {
+          /*close();*/
+          jsPsych.data.displayData();
+        }
+    });
+  </script>
+  </body>
+</html>
